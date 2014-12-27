@@ -56,14 +56,26 @@ var exitCode = 0;
 files.forEach(function (file) {
   var re = require('gfm-code-block-regex')();
   var contents = fs.readFileSync(file, 'utf8');
-  contents = contents.replace(re, '');
-  var suggestions = writeGood(contents, opts);
+  var contentsCopy = contents;
+
+  while ((match = re.exec(contents)) != null) {
+    var lines = match[0].split('\n');
+    lines.pop();
+    var newLines = '';
+    for (var i=0; i < lines.length; i++) {
+      newLines = newLines.concat('\n');
+    }
+
+    contentsCopy = contentsCopy.replace(match[0], newLines);
+  }
+
+  var suggestions = writeGood(contentsCopy, opts);
 
   exitCode += suggestions.length;
   if (suggestions.length) {
     console.log('In ' + file);
     console.log('=============');
-    console.log(annotate(contents, suggestions).join('\n-------------\n'));
+    console.log(annotate(contentsCopy, suggestions).join('\n-------------\n'));
   }
 });
 
