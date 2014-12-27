@@ -54,7 +54,9 @@ Object.keys(opts).forEach(function (name) {
 
 var exitCode = 0;
 files.forEach(function (file) {
+  var re = require('gfm-code-block-regex')();
   var contents = fs.readFileSync(file, 'utf8');
+  contents = contents.replace(re, '');
   var suggestions = writeGood(contents, opts);
 
   exitCode += suggestions.length;
